@@ -32,33 +32,64 @@ def lengthen_blank_array(array, hangman_word)
     return array
 end
 
-def check_guess(hangman_word, guess_char, correct_guesses)
-    if hangman_word.include?(guess_char)
+def draw_man(guess_count)
+    if guess_count == 0
+        puts ""
+    end
+end
+
+def check_guess(hangman_word, guess_char, correct_guesses, incorrect_guesses)
+    if incorrect_guesses.include?(guess_char) || correct_guesses.include?(guess_char)
+    # check if the player has already guessed the character
+        puts "You have already guessed this letter".cyan
+        guess_char = get_letter(guess_char)
+        check_guess(hangman_word, guess_char, correct_guesses, incorrect_guesses)
+
+    elsif hangman_word.include?(guess_char)
         hangman_word.split("").each_with_index { |letter, index| 
             if letter == guess_char
                 correct_guesses[index] = letter
             end
         }
+    else
+        incorrect_guesses.push(guess_char)
     end
 end
 
-hangman_word = "apple" #pick_random_line()
-guess_char = get_letter(guess_char)
+def run_game(hangman_word, guess_char, correct_guesses, incorrect_guesses)
+    i = 0
+    until i == 11
+        puts "#{i}".green
+        guess_char = get_letter(guess_char)
+
+        check_guess(hangman_word, guess_char, correct_guesses, incorrect_guesses)
+
+        if incorrect_guesses.length - i == 1
+        # check if the incorrect_guesses increased
+            i += 1
+        end
+
+        puts "\n"
+        puts "Correct Guesses".cyan
+        puts correct_guesses.join("")
+        puts "\n"
+        puts "Incorrect Guesses".red
+        puts incorrect_guesses.join("")
+        puts "\n"
+        if (correct_guesses - hangman_word.split("")).length == 0
+            return puts "You won! Congratulations!".green.bold
+        end 
+    end
+    return puts "You couldn't guess the word in time".red
+end
+
+hangman_word = pick_random_line()
+guess_char = ""
+incorrect_guesses = Array.new
 correct_guesses = Array.new
+
 lengthen_blank_array(correct_guesses, hangman_word)
 
-puts hangman_word
-puts guess_char
-p correct_guesses 
+run_game(hangman_word, guess_char, correct_guesses, incorrect_guesses)
 
-check_guess(hangman_word, guess_char, correct_guesses)
-guess_char = get_letter(guess_char)
-p correct_guesses
-check_guess(hangman_word, guess_char, correct_guesses)
-p correct_guesses
-guess_char = get_letter(guess_char)
-check_guess(hangman_word, guess_char, correct_guesses)
-p correct_guesses
-guess_char = get_letter(guess_char)
-check_guess(hangman_word, guess_char, correct_guesses)
-p correct_guesses
+puts hangman_word

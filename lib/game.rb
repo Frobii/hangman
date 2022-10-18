@@ -120,7 +120,7 @@ def run_game(hangman_word, guess_char, correct_guesses, incorrect_guesses)
         puts incorrect_guesses.join("")
         puts "\n"
         if (correct_guesses - hangman_word.split("")).length == 0
-            return puts "You won! Congratulations!".green.bold
+            return puts "You guessed the word #{hangman_word}! Congratulations!".green.bold
         end 
     end
     draw_man(11)

@@ -1,5 +1,26 @@
 require 'colorize'
 
+def save_game(i, j, hangman_word, correct_guesses, incorrect_guesses)
+    Dir.mkdir('../saved_games') unless Dir.exists?('../saved_games')
+
+    save = 1
+
+    while File.exists?("../saved_games/" + save.to_s + ".txt")
+        save += 1 
+    end
+    
+    filename = "../saved_games/" + save.to_s + ".txt"
+    
+    File.open(filename, 'w') do |file|
+      file.puts i.to_s
+      file.puts j.to_s
+      file.puts hangman_word.to_s
+      file.puts correct_guesses.to_s
+      file.puts incorrect_guesses.to_s
+    end
+    exit()
+end
+
 def pick_random_line
     word = File.readlines("../sample_words.txt").sample.chomp
 
@@ -15,7 +36,10 @@ def letter?(lookAhead)
 end
 
 def get_letter(word)
-    if !letter?(word = gets.chomp.downcase) || word.length > 1
+    word = gets.chomp.downcase
+    if word == "save"
+        return word
+    elsif !letter?(word) || word.length > 1
         puts "Please make a valid input".red
         word = get_letter(word)
     end
@@ -71,12 +95,16 @@ def draw_man(guess)
 
 end
 
-def check_guess(hangman_word, guess_char, correct_guesses, incorrect_guesses)
+def check_guess(i, j, hangman_word, guess_char, correct_guesses, incorrect_guesses)
+    if guess_char.downcase == "save"
+        save_game(i, j, hangman_word, correct_guesses, incorrect_guesses)
+    end
+    
     if incorrect_guesses.include?(guess_char) || correct_guesses.include?(guess_char)
     # check if the player has already guessed the character
         puts "You have already guessed this letter".cyan
         guess_char = get_letter(guess_char)
-        check_guess(hangman_word, guess_char, correct_guesses, incorrect_guesses)
+        check_guess(i, j, hangman_word, guess_char, correct_guesses, incorrect_guesses)
 
     elsif hangman_word.include?(guess_char)
         hangman_word.split("").each_with_index { |letter, index| 
@@ -115,7 +143,7 @@ def run_game(hangman_word, guess_char, correct_guesses, incorrect_guesses)
         j += 1
         guess_char = get_letter(guess_char)
 
-        check_guess(hangman_word, guess_char, correct_guesses, incorrect_guesses)
+        check_guess(i, j, hangman_word, guess_char, correct_guesses, incorrect_guesses)
 
         if incorrect_guesses.length - i == 1
         # check if the incorrect_guesses increased

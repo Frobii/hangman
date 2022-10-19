@@ -15,8 +15,8 @@ def save_game(i, j, hangman_word, correct_guesses, incorrect_guesses)
       file.puts i.to_s
       file.puts j.to_s
       file.puts hangman_word.to_s
-      file.puts correct_guesses.to_s
-      file.puts incorrect_guesses.to_s
+      file.puts correct_guesses.join("")
+      file.puts incorrect_guesses.join("")
     end
     exit()
 end

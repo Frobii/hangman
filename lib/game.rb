@@ -18,7 +18,24 @@ def save_game(i, j, hangman_word, correct_guesses, incorrect_guesses)
       file.puts correct_guesses.join("")
       file.puts incorrect_guesses.join("")
     end
+    puts "Your save number is: ".cyan + "#{save.to_s}".cyan.bold
     exit()
+end
+
+def load_game
+    puts "Please enter your save number".cyan
+    file_number = gets.chomp.to_s
+    file_array = Array.new
+
+    begin
+        File.open("../saved_games/#{file_number}.txt").each do 
+            |line| file_array.push(line)
+        end
+    rescue 
+        puts "The specified save number cannot be found".red
+    end
+    
+    return file_array
 end
 
 def pick_random_line
@@ -129,18 +146,44 @@ def run_game(hangman_word, guess_char, correct_guesses, incorrect_guesses)
                         __/ |                      
                        |___/     \n
     "
-    sleep 0.8
+    sleep 0.7
+    puts "Type 'load' to start from a previous save".cyan
+    puts "Type 'play' to start a new game".green
     puts "\n"
-    puts "Guess #{j}".green
+    selection = gets.chomp.downcase
+
+    until selection == "load" || selection == "play"
+        puts "Please make a valid selection".red
+        selection = gets.chomp.downcase
+    end
+
+    if selection == "load"
+        load_data = Array.new
+        until load_data.length == 5
+            load_data = load_game()
+        # will ask for your save number until the array is loaded with the right data
+        end
+        i = load_data[0].to_i
+        j = load_data[1].to_i - 1
+        hangman_word = load_data[2].chomp
+        correct_guesses = load_data[3].chomp.split("")
+        incorrect_guesses = load_data[4].chomp.split("")
+    end
+
+    puts "\n"
+    puts "\n"
+    puts "Guess #{j}".green.bold
     puts "\n"
     puts "Word Progress".cyan
     puts correct_guesses.join("")
     puts "\n"
     puts "Incorrect Guesses".red
-        puts incorrect_guesses.join("")
+    puts incorrect_guesses.join("")
+
     until i == 11
         draw_man(i)
         j += 1
+        puts "To save your game type 'save'".yellow
         guess_char = get_letter(guess_char)
 
         check_guess(i, j, hangman_word, guess_char, correct_guesses, incorrect_guesses)
@@ -151,7 +194,7 @@ def run_game(hangman_word, guess_char, correct_guesses, incorrect_guesses)
         end
         puts "\n"
         puts "\n"
-        puts "Guess #{j}".green
+        puts "Guess #{j}".green.bold
         puts "\n"
         puts "Word Progress".cyan
         puts correct_guesses.join("")

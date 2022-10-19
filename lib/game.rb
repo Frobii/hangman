@@ -91,6 +91,7 @@ end
 
 def run_game(hangman_word, guess_char, correct_guesses, incorrect_guesses)
     i = 0
+    j = 1
     puts "     _                                            
     | |                                            
     | |__   __ _ _ __   __ _ _ __ ___   __ _ _ __  
@@ -100,9 +101,18 @@ def run_game(hangman_word, guess_char, correct_guesses, incorrect_guesses)
                         __/ |                      
                        |___/     \n
     "
+    sleep 0.8
+    puts "\n"
+    puts "Guess #{j}".green
+    puts "\n"
+    puts "Word Progress".cyan
+    puts correct_guesses.join("")
+    puts "\n"
+    puts "Incorrect Guesses".red
+        puts incorrect_guesses.join("")
     until i == 11
         draw_man(i)
-        puts "#{i}/11".green
+        j += 1
         guess_char = get_letter(guess_char)
 
         check_guess(hangman_word, guess_char, correct_guesses, incorrect_guesses)
@@ -111,7 +121,9 @@ def run_game(hangman_word, guess_char, correct_guesses, incorrect_guesses)
         # check if the incorrect_guesses increased
             i += 1
         end
-
+        puts "\n"
+        puts "\n"
+        puts "Guess #{j}".green
         puts "\n"
         puts "Word Progress".cyan
         puts correct_guesses.join("")
@@ -120,7 +132,7 @@ def run_game(hangman_word, guess_char, correct_guesses, incorrect_guesses)
         puts incorrect_guesses.join("")
         puts "\n"
         if (correct_guesses - hangman_word.split("")).length == 0
-            return puts "You guessed the word #{hangman_word}! Congratulations!".green.bold
+            return puts "You guessed the word ".green + "#{hangman_word}!".green.bold + " Congratulations!".green
         end 
     end
     draw_man(11)
